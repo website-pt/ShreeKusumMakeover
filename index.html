@@ -449,19 +449,106 @@
             .gallery-item.wide { grid-column: span 1; }
         }
         @media (max-width: 640px) {
-            section { padding: 70px 16px; }
-            .services-grid, .courses-grid, .crash-grid, .testi-grid, .salon-services-grid { grid-template-columns: 1fr; }
-            .about-stats { grid-template-columns: 1fr; }
-            .hero-buttons { flex-direction: column; width: 100%; padding: 0 16px; }
-            .btn { width: 100%; justify-content: center; }
-            .contact-form-container { padding: 30px 20px; }
-            .top-bar-content { flex-direction: column; justify-content: center; }
-            .header { top: 70px; }
-            .cursor, .cursor-dot { display: none; }
+            /* ── Base layout ── */
+            section { padding: 56px 14px; }
+            .container { padding: 0 2px; }
+
+            /* ── Top bar: hide address, keep phone + email compact ── */
+            .top-bar-content { flex-direction: row; justify-content: center; flex-wrap: wrap; gap: 6px; padding: 0 10px; }
+            .top-bar-item { font-size: 0.75rem; gap: 5px; }
+            .top-bar-item:last-child { display: none; } /* hide address */
+            .header { top: 44px; }
+
+            /* ── Hero ── */
+            .hero { padding-top: 120px; }
+            .hero-title { font-size: clamp(2rem, 9vw, 2.8rem); }
+            .hero-subtitle { font-size: clamp(1rem, 4vw, 1.2rem); }
+            .hero-tagline { font-size: 0.85rem; letter-spacing: 0.08em; }
+            .hero-buttons { flex-direction: column; width: 100%; padding: 0 10px; }
+            .btn { width: 100%; justify-content: center; padding: 14px 24px; font-size: 0.92rem; }
+            .floating-shape { display: none; }
+
+            /* ── Services: compact 2-col grid ── */
+            .services-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .service-card { padding: 20px 14px; border-radius: 18px; }
+            .service-icon { width: 48px; height: 48px; border-radius: 14px; margin-bottom: 14px; font-size: 1.4rem; }
+            .service-title { font-size: 1rem; margin-bottom: 8px; }
+            .service-description { font-size: 0.8rem; line-height: 1.55; }
+            .service-link { font-size: 0.8rem; margin-top: 12px; }
+
+            /* ── Courses: compact 2-col grid ── */
+            .courses-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .course-card { padding: 18px 14px; border-radius: 16px; }
+            .course-name { font-size: 0.9rem; }
+            .course-price { font-size: 1.1rem; }
+            .course-duration { font-size: 0.72rem; padding: 3px 9px; }
+            .course-enrol { font-size: 0.75rem; padding: 7px 14px; }
+            .courses-tabs { gap: 8px; }
+            .course-tab { padding: 8px 16px; font-size: 0.8rem; }
+
+            /* ── Crash courses: 2-col ── */
+            .crash-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .crash-card { padding: 16px 14px; border-radius: 14px; }
+            .crash-name { font-size: 0.85rem; }
+            .crash-price { font-size: 1rem; }
+
+            /* ── Salon services: 2×2 compact ── */
+            .salon-services-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .salon-service-item { padding: 16px 12px; border-radius: 14px; }
+            .salon-service-icon { font-size: 1.5rem; margin-bottom: 6px; }
+            .salon-service-name { font-size: 0.8rem; }
+
+            /* ── About ── */
+            .about-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 24px; }
+            .stat-item { padding: 16px 8px; border-radius: 14px; }
+            .stat-number { font-size: 1.7rem; }
+            .stat-label { font-size: 0.72rem; }
             .about-badge-top, .about-badge-bottom { display: none; }
+            .about-quals { gap: 6px; }
+            .qual-tag { font-size: 0.75rem; padding: 5px 10px; }
+
+            /* ── Gallery: 2-col ── */
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .gallery-item.wide { grid-column: span 1; }
+            .gallery-item.tall { grid-row: span 1; }
+            .gallery-tabs { overflow-x: auto; justify-content: flex-start; padding-bottom: 6px; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+            .gallery-tabs::-webkit-scrollbar { display: none; }
+            .gallery-tab { white-space: nowrap; padding: 8px 16px; font-size: 0.8rem; flex-shrink: 0; }
+
+            /* ── Testimonials: 1-col (these need full width for readability) ── */
+            .testi-grid { grid-template-columns: 1fr; gap: 14px; }
+            .testi-card { padding: 22px 18px; }
+            .testi-quote { font-size: 0.88rem; }
+
+            /* ── Contact ── */
+            .contact-form-container { padding: 24px 16px; border-radius: 20px; }
+            .contact-item-icon { width: 46px; height: 46px; border-radius: 12px; }
+
+            /* ── Section headers ── */
+            .section-header { margin-bottom: 36px; }
+            .section-title { font-size: clamp(1.6rem, 7vw, 2.2rem); }
+            .section-subtitle { font-size: 0.9rem; }
+            .section-badge { font-size: 0.7rem; padding: 5px 13px; }
+
+            /* ── WhatsApp float ── */
+            .wa-float { width: 50px; height: 50px; bottom: 20px; right: 18px; }
+            .wa-float svg { width: 24px; height: 24px; }
+
+            /* ── Footer ── */
+            .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+
+            /* ── Misc ── */
+            .cursor, .cursor-dot { display: none; }
             .whyus-badge-float { display: none; }
-            .gallery-grid { grid-template-columns: 1fr; }
-            .floating-shape, .floating-orb { display: none; }
+            .floating-orb { display: none; }
+            .grid-overlay { display: none; }
+        }
+
+        /* ── Extra-small phones (≤ 380px) ── */
+        @media (max-width: 380px) {
+            .services-grid, .courses-grid, .crash-grid, .salon-services-grid { grid-template-columns: 1fr; }
+            .about-stats { grid-template-columns: repeat(3, 1fr); }
+            .stat-number { font-size: 1.4rem; }
         }
         /* ── ABOUT CERT CHIPS ── */
         .about-certs-row { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
