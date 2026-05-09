@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salon Gallery — Shree Kusum Makeover</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent-purple: #8B004A;
+            --accent-pink: #d4005a;
+            --alabaster: #F2EFE7;
+            --glass-bg: rgba(139,0,74,0.07);
+            --glass-border: rgba(139,0,74,0.18);
+            --text-primary: #2a0015;
+            --text-secondary: rgba(42,0,21,0.75);
+            --text-muted: rgba(42,0,21,0.5);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Jost', sans-serif; background: var(--alabaster); color: var(--text-primary); min-height: 100vh; }
+
+        /* ── HEADER ── */
+        .pg-header {
+            background: rgba(242,239,231,0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 12px 16px;
+            display: flex; align-items: center; gap: 12px;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 20px rgba(139,0,74,0.1);
+            flex-wrap: wrap;
+        }
+        @media (max-width: 560px) {
+            .pg-title { font-size: 1.2rem; }
+            .pg-count { font-size: 0.75rem; }
+            .pg-back { padding: 6px 12px; font-size: 0.8rem; }
+        }
+        .pg-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; border-radius: 50px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            color: var(--accent-purple); text-decoration: none; font-size: 0.88rem; font-weight: 600;
+            transition: all 0.3s;
+        }
+        .pg-back:hover { background: rgba(139,0,74,0.14); }
+        .pg-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; }
+        .pg-title span { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .pg-count { margin-left: auto; font-size: 0.82rem; color: var(--text-muted); }
+
+        /* ── MASONRY GRID ── */
+        .pg-container { max-width: 1400px; margin: 0 auto; padding: 24px 12px 48px; }
+        @media (max-width: 560px) { .pg-container { padding: 16px 8px 40px; } }
+        .pg-intro { text-align: center; margin-bottom: 40px; }
+        .pg-intro p { color: var(--text-secondary); font-size: 1rem; }
+
+        /* Section labels */
+        .pg-section-label {
+            display: flex; align-items: center; gap: 14px;
+            font-size: 1.1rem; font-weight: 700; color: var(--text-primary);
+            margin: 40px 0 20px;
+        }
+        .pg-section-label::after {
+            content: ''; flex: 1; height: 1px; background: var(--glass-border);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .gallery-grid.two-col { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 900px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 560px) { 
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .gallery-grid.two-col { grid-template-columns: 1fr; }
+            .g-item.wide { grid-column: span 2; }
+        }
+
+        .g-item {
+            border-radius: 16px; overflow: hidden;
+            position: relative;
+            border: 1px solid var(--glass-border);
+            cursor: pointer; transition: transform 0.35s, box-shadow 0.35s;
+            background: transparent;
+            /* NO fixed aspect-ratio — frame sizes to image */
+        }
+        .g-item:hover { transform: scale(1.025); box-shadow: 0 12px 36px rgba(139,0,74,0.2); }
+        .g-item.wide { grid-column: span 2; }
+        .g-item.tall { grid-row: span 2; }
+        /* Image fills full width, height is natural — no empty space */
+        .g-item img { width: 100%; height: auto; display: block; vertical-align: bottom; }
+        /* Placeholder hidden by default — JS shows it only when image fails */
+        .g-placeholder {
+            display: none;
+            width: 100%; min-height: 160px;
+            flex-direction: column; align-items: center; justify-content: center;
+            gap: 10px; color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 16px;
+            background: #f0e8ee;
+        }
+        .g-placeholder .pi { font-size: 2.2rem; }
+        .g-placeholder .hint {
+            font-size: 0.72rem; border: 1px dashed var(--glass-border);
+            border-radius: 8px; padding: 6px 12px; line-height: 1.5; color: var(--text-muted);
+        }
+        .g-overlay { display: none; }
+
+        /* VIDEO inside grid */
+        .g-item.video-card { aspect-ratio: 16/9; background: #000; }
+        .g-item.video-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .g-video-ph {
+            width: 100%; height: 100%; min-height: 200px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 12px; background: linear-gradient(160deg, #1a0010, #2a0020);
+            color: rgba(255,255,255,0.7); font-size: 0.85rem; text-align: center; padding: 20px;
+        }
+        .g-video-ph .vi { font-size: 3rem; }
+        .g-video-ph .vh {
+            font-size: 0.72rem; border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 8px; padding: 6px 12px; line-height: 1.6; color: rgba(255,255,255,0.5);
+        }
+
+        /* LIGHTBOX */
+        .lightbox {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .lightbox.open { opacity: 1; pointer-events: all; }
+        .lightbox img { max-width: 90vw; max-height: 88vh; border-radius: 12px; object-fit: contain; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+        .lb-close {
+            position: absolute; top: 20px; right: 24px;
+            font-size: 2rem; color: #fff; cursor: pointer; background: none; border: none; line-height: 1;
+            opacity: 0.7; transition: opacity 0.2s;
+        }
+        .lb-close:hover { opacity: 1; }
+        .lb-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; font-size: 1.6rem; width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: background 0.2s; user-select: none;
+        }
+        .lb-nav:hover { background: rgba(139,0,74,0.5); }
+        .lb-prev { left: 20px; }
+        .lb-next { right: 20px; }
+        .lb-caption { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+
+        /* ADD MORE hint box */
+        .add-more-box {
+            margin-top: 48px; padding: 28px 32px;
+            background: var(--glass-bg); border: 1.5px dashed var(--glass-border);
+            border-radius: 20px; text-align: center;
+        }
+        .add-more-box h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+        .add-more-box p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.7; }
+        .add-more-box code { background: rgba(139,0,74,0.08); border-radius: 4px; padding: 2px 7px; font-size: 0.84rem; color: var(--accent-purple); }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="pg-header">
+        <a class="pg-back" href="index.html">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Back to Website
+        </a>
+        <div class="pg-title">💇 <span>Salon</span> Gallery</div>
+        <div class="pg-count">Shree Kusum Makeover · Ajmer</div>
+    </div>
+
+    <div class="pg-container">
+        <div class="pg-intro">
+            <p>All salon photos and video — replace placeholder filenames with your actual image files.</p>
+        </div>
+
+        <!-- ── VIDEO ── -->
+        <div class="pg-section-label">🎬 Salon Video Tour</div>
+        <div class="gallery-grid two-col">
+            <div class="g-item video-card wide" style="aspect-ratio:unset; background:#000;">
+                <video controls autoplay muted loop playsinline style="width:100%;height:auto;display:block;max-width:100%;">
+                    <source src="salon-video.mp4" type="video/mp4">
+                </video>
+            </div>
+        </div>
+
+        <!-- ── PHOTOS ── -->
+        <div class="pg-section-label">📸 Salon Photos</div>
+        <div class="gallery-grid" id="salonGrid">
+
+            <!-- ══ ADD / REPLACE PHOTOS BELOW ══
+                 Each .g-item needs an <img src="your-file.jpg">
+                 You can add as many .g-item blocks as you want.
+                 Use class="g-item wide" to make an image span 2 columns.
+                 All image files must be in the same folder as this HTML file.
+            ═══════════════════════════════════ -->
+
+            <div class="g-item wide" onclick="openLb(0)">
+                <img src="salon-1.jpeg" alt="Salon Interior" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">💇</div><span>Salon Photo 1</span><div class="hint">Replace src="salon-1.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Salon Interior</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(1)">
+                <img src="salon-2.jpeg" alt="Bridal Makeup" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">💄</div><span>Salon Photo 2</span><div class="hint">Replace src="salon-2.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Bridal Makeup</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(2)">
+                <img src="salon-3.jpeg" alt="Nail Art" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">💅</div><span>Salon Photo 3</span><div class="hint">Replace src="salon-3.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Nail Art Service</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(3)">
+                <img src="salon-4.jpeg" alt="Hair Styling" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">✂️</div><span>Salon Photo 4</span><div class="hint">Replace src="salon-4.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Hair Styling</div></div>
+            </div>
+            <div class="g-item wide" onclick="openLb(4)">
+                <img src="salon-5.jpeg" alt="Client Transformation" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">🌸</div><span>Salon Photo 5</span><div class="hint">Replace src="salon-5.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Client Transformation</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(5)">
+                <img src="salon-6.jpeg" alt="Happy Clients" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">✨</div><span>Salon Photo 6</span><div class="hint">Replace src="salon-6.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Happy Clients</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(6)">
+                <img src="salon-7.jpeg" alt="Waxing" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">🪷</div><span>Salon Photo 7</span><div class="hint">Replace src="salon-7.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Waxing &amp; Skin Care</div></div>
+            </div>
+            <div class="g-item wide" onclick="openLb(7)">
+                <img src="salon-8.jpeg" alt="Spa &amp; Massage" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">💆</div><span>Salon Photo 8</span><div class="hint">Replace src="salon-8.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Spa &amp; Massage</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(8)">
+                <img src="salon-9.jpeg" alt="Pedicure" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">🦶</div><span>Salon Photo 9</span><div class="hint">Replace src="salon-9.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Pedicure</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(9)">
+                <img src="salon-10.jpeg" alt="Manicure" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">🌿</div><span>Salon Photo 10</span><div class="hint">Replace src="salon-10.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Manicure</div></div>
+            </div>
+            <div class="g-item wide" onclick="openLb(10)">
+                <img src="salon-11.jpeg" alt="Eyelash Extensions" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">👁️</div><span>Salon Photo 11</span><div class="hint">Replace src="salon-11.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Eyelash Extensions</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(11)">
+                <img src="salon-12.jpeg" alt="Body Polish" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">🌺</div><span>Salon Photo 12</span><div class="hint">Replace src="salon-12.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Body Polish</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(12)">
+                <img src="salon-13.jpeg" alt="Salon" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">🎀</div><span>Salon Photo 13</span><div class="hint">Replace src="salon-13.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Salon Service</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(13)">
+                <img src="salon-14.jpeg" alt="Salon" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">💋</div><span>Salon Photo 14</span><div class="hint">Replace src="salon-14.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Salon Service</div></div>
+            </div>
+            <div class="g-item" onclick="openLb(14)">
+                <img src="salon-15.jpeg" alt="Salon" onload="this.nextElementSibling.style.display='none'" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="g-placeholder"><div class="pi">🌙</div><span>Salon Photo 15</span><div class="hint">Replace src="salon-15.jpg"</div></div>
+                <div class="g-overlay"><div class="g-overlay-text">Salon Service</div></div>
+            </div>
+            <!-- ADD MORE .g-item blocks here for more photos -->
+        </div>
+
+        <div class="add-more-box">
+            <h3>📁 How to Add More Photos</h3>
+            <p>
+                Copy any <code>.g-item</code> block above, paste it inside the grid, and change the <code>src="salon-XX.jpg"</code> to your new photo filename.<br>
+                Save all your images in the <strong>same folder</strong> as this HTML file. You can add as many as you like — the grid expands automatically.
+            </p>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX -->
+    <div class="lightbox" id="lightbox" onclick="closeLbOutside(event)">
+        <button class="lb-close" onclick="closeLb()">✕</button>
+        <button class="lb-nav lb-prev" onclick="lbNav(-1)">&#8592;</button>
+        <img id="lbImg" src="" alt="">
+        <button class="lb-nav lb-next" onclick="lbNav(1)">&#8594;</button>
+        <div class="lb-caption" id="lbCaption"></div>
+    </div>
+
+    <script>
+        // Simple lightbox for images with real src
+        const items = Array.from(document.querySelectorAll('#salonGrid .g-item:not(.video-card)'));
+        let currentIdx = 0;
+
+        function openLb(idx) {
+            const img = items[idx] && items[idx].querySelector('img');
+            if (!img || img.style.display === 'none') return;
+            currentIdx = idx;
+            document.getElementById('lbImg').src = img.src;
+            document.getElementById('lbCaption').textContent = img.alt || '';
+            document.getElementById('lightbox').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLb() {
+            document.getElementById('lightbox').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        function closeLbOutside(e) { if (e.target === document.getElementById('lightbox')) closeLb(); }
+        function lbNav(dir) {
+            let next = currentIdx + dir;
+            if (next < 0) next = items.length - 1;
+            if (next >= items.length) next = 0;
+            openLb(next);
+        }
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeLb();
+            if (e.key === 'ArrowRight') lbNav(1);
+            if (e.key === 'ArrowLeft') lbNav(-1);
+        });
+    </script>
+</body>
+</html>
