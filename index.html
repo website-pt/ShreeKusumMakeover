@@ -771,11 +771,68 @@
             border: 1px solid var(--glass-border); font-size: 0.85rem; color: var(--text-secondary);
             text-align: center; line-height: 1.7;
         }
+        /* ── CERT PHOTO GALLERY ── */
+        .cert-photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px; margin-top: 4px;
+        }
+        .cert-photo-item {
+            border-radius: 14px; overflow: hidden; position: relative;
+            aspect-ratio: 4/3; background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            cursor: pointer;
+        }
+        .cert-photo-item:hover { transform: scale(1.04); box-shadow: var(--glow-purple); border-color: var(--accent-purple); }
+        .cert-photo-item img {
+            width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+            transition: transform 0.5s ease;
+        }
+        .cert-photo-item:hover img { transform: scale(1.08); }
+        .cert-photo-placeholder {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 8px; background: linear-gradient(160deg, rgba(139,0,74,0.07), rgba(212,0,90,0.05));
+        }
+        .cert-photo-placeholder-icon { font-size: 2rem; }
+        .cert-photo-placeholder-text { font-size: 0.72rem; color: var(--text-muted); text-align: center; padding: 0 10px; line-height: 1.4; }
+        .cert-photo-caption {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(to top, rgba(90,0,47,0.85) 0%, transparent 100%);
+            color: #fff; font-size: 0.72rem; font-weight: 600;
+            padding: 22px 10px 8px; opacity: 0; transition: opacity 0.35s;
+            text-align: center;
+        }
+        .cert-photo-item:hover .cert-photo-caption { opacity: 1; }
+        /* Lightbox for cert photos */
+        .cert-lightbox {
+            position: fixed; inset: 0; z-index: 30000;
+            background: rgba(20,0,10,0.92); backdrop-filter: blur(12px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .cert-lightbox.open { opacity: 1; visibility: visible; }
+        .cert-lightbox img {
+            max-width: 90vw; max-height: 88vh; border-radius: 16px;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.7);
+            object-fit: contain;
+        }
+        .cert-lightbox-close {
+            position: fixed; top: 20px; right: 24px;
+            width: 42px; height: 42px; border-radius: 50%;
+            background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3);
+            color: #fff; font-size: 1.3rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; font-family: var(--font-body);
+        }
+        .cert-lightbox-close:hover { background: rgba(255,255,255,0.28); transform: rotate(90deg); }
         @media (max-width: 640px) {
             .cert-panel-header { padding: 28px 24px 22px; }
             .cert-panel-body { padding: 24px 20px 28px; }
             .cert-cards-grid { grid-template-columns: 1fr; }
             .about-cert-chip { padding: 10px 12px; }
+            .cert-photo-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
         }
     </style>
 <body>
@@ -1608,21 +1665,10 @@
                         <div class="gallery-overlay"><div class="gallery-overlay-text">Hair Styling</div></div>
                     </div>
                     <!-- VIDEO CARD inside the grid -->
-                    <div class="gallery-item gallery-item-video wide" data-aos="fade-up" data-aos-delay="170" style="aspect-ratio:16/9; background:#000;">
-                        <!--
-                            SALON VIDEO: save file as salon-video.mp4 in same folder, then:
-                            1. Delete the <div class="gallery-video-placeholder">…</div> below.
-                            2. Uncomment the <video> tag.
-
-                            <video controls playsinline style="width:100%;height:100%;object-fit:cover;">
+                    <div class="gallery-item gallery-item-video wide" data-aos="fade-up" data-aos-delay="170" style="aspect-ratio:unset; background:#000;">
+                            <video controls autoplay muted loop playsinline style="width:100%;height:auto;display:block;">
                                 <source src="salon-video.mp4" type="video/mp4">
                             </video>
-                        -->
-                        <div class="gallery-video-placeholder">
-                            <div class="vp-icon">🎬</div>
-                            <strong>Salon Video Tour</strong>
-                            <div class="vp-hint">Save as <code>salon-video.mp4</code> and follow the comment above.</div>
-                        </div>
                         <div class="gallery-overlay"><div class="gallery-overlay-text">▶ Salon Video Tour</div></div>
                     </div>
                     <div class="gallery-item" data-aos="fade-up" data-aos-delay="200">
@@ -1667,21 +1713,10 @@
                         <div class="gallery-overlay"><div class="gallery-overlay-text">Nail Artistry Class</div></div>
                     </div>
                     <!-- VIDEO CARD inside the grid -->
-                    <div class="gallery-item gallery-item-video wide" data-aos="fade-up" data-aos-delay="170" style="aspect-ratio:16/9; background:#000;">
-                        <!--
-                            INSTITUTE VIDEO: save file as institute-video.mp4 in same folder, then:
-                            1. Delete the <div class="gallery-video-placeholder">…</div> below.
-                            2. Uncomment the <video> tag.
-
-                            <video controls playsinline style="width:100%;height:100%;object-fit:cover;">
-                                <source src="institute-video.mp4" type="video/mp4">
-                            </video>
-                        -->
-                        <div class="gallery-video-placeholder">
-                            <div class="vp-icon">🎬</div>
-                            <strong>Institute Video Tour</strong>
-                            <div class="vp-hint">Save as <code>institute-video.mp4</code> and follow the comment above.</div>
-                        </div>
+                    <div class="gallery-item gallery-item-video wide" data-aos="fade-up" data-aos-delay="170" style="aspect-ratio:unset; background:#000;">
+                        <video controls autoplay muted loop playsinline style="width:100%;height:auto;display:block;">
+                            <source src="institute-video.mp4" type="video/mp4">
+                        </video>
                         <div class="gallery-overlay"><div class="gallery-overlay-text">▶ Institute Video Tour</div></div>
                     </div>
                     <div class="gallery-item" data-aos="fade-up" data-aos-delay="200">
@@ -1950,28 +1985,71 @@
             </div>
             <div class="cert-panel-body">
 
-                <div class="cert-section-title">🏅 Professional Beauty Certifications</div>
+                <div class="cert-section-title">🏅 London Beauty Institute — International Certifications</div>
                 <div class="cert-cards-grid">
                     <div class="cert-card">
                         <div class="cert-card-icon">🌍</div>
                         <div class="cert-card-title">UK International Makeup Artist</div>
                         <div class="cert-card-sub">London Beauty Institute, Delhi — International Certificate in Professional Makeup Artistry</div>
-                        <span class="cert-card-badge">✔ International · 4+ Years</span>
-                        <div class="cert-img-placeholder"><span>📜</span>Add photo: <strong>cert_makeup_uk.jpg</strong></div>
+                        <span class="cert-card-badge">✔ International · Main Certificate</span>
+                        <div class="cert-img-placeholder">
+                            <img src="cert_london_makeup.jpg" alt="London Makeup Certificate" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div style="display:none;flex-direction:column;align-items:center;gap:6px;"><span>📜</span><small>Add photo: <strong>cert_london_makeup.jpg</strong></small></div>
+                        </div>
                     </div>
                     <div class="cert-card">
                         <div class="cert-card-icon">💅</div>
                         <div class="cert-card-title">International Nail Art Certification</div>
-                        <div class="cert-card-sub">Internationally certified Nail Artist — Gel, Extensions, Nail Art &amp; Advanced Techniques</div>
-                        <span class="cert-card-badge">✔ International · 4+ Years</span>
-                        <div class="cert-img-placeholder"><span>📜</span>Add photo: <strong>cert_nail_art.jpg</strong></div>
+                        <div class="cert-card-sub">London Beauty Institute, Delhi — Internationally certified Nail Artist · Gel, Extensions &amp; Advanced Nail Art Techniques</div>
+                        <span class="cert-card-badge">✔ International · Main Certificate</span>
+                        <div class="cert-img-placeholder">
+                            <img src="cert_london_nail.jpg" alt="London Nail Art Certificate" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div style="display:none;flex-direction:column;align-items:center;gap:6px;"><span>📜</span><small>Add photo: <strong>cert_london_nail.jpg</strong></small></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cert-section-title">🌸 Specialised Workshops &amp; Skill Certifications</div>
+                <div class="cert-cards-grid">
+                    <div class="cert-card">
+                        <div class="cert-card-icon">💎</div>
+                        <div class="cert-card-title">Nail Extension Workshop</div>
+                        <div class="cert-card-sub">Orane International — Certified in professional Nail Extension techniques &amp; advanced application methods</div>
+                        <span class="cert-card-badge">✔ Orane International</span>
+                        <div class="cert-img-placeholder">
+                            <img src="cert_orane_nail.jpg" alt="Orane Nail Extension Certificate" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div style="display:none;flex-direction:column;align-items:center;gap:6px;"><span>📜</span><small>Add photo: <strong>cert_orane_nail.jpg</strong></small></div>
+                        </div>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-card-icon">✂️</div>
+                        <div class="cert-card-title">Hair Styling Competition Certificate</div>
+                        <div class="cert-card-sub">Kamal Hair Stylist — Successfully completed 1-month professional Hair Course &amp; Hair Styling Competition</div>
+                        <span class="cert-card-badge">✔ Hair Styling · Competition</span>
+                        <div class="cert-img-placeholder">
+                            <img src="cert_hair_kamal.jpg" alt="Hair Styling Certificate" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div style="display:none;flex-direction:column;align-items:center;gap:6px;"><span>📜</span><small>Add photo: <strong>cert_hair_kamal.jpg</strong></small></div>
+                        </div>
+                    </div>
+                    <div class="cert-card">
+                        <div class="cert-card-icon">🌿</div>
+                        <div class="cert-card-title">Advance Korean Glass Facial</div>
+                        <div class="cert-card-sub">TYE Wellness Community — Successfully completed one-day "Advance Korean Glass Treatment" certification</div>
+                        <span class="cert-card-badge">✔ TYE Wellness Community</span>
+                        <div class="cert-img-placeholder">
+                            <img src="cert_korean_glass.jpg" alt="Korean Glass Facial Certificate" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div style="display:none;flex-direction:column;align-items:center;gap:6px;"><span>📜</span><small>Add photo: <strong>cert_korean_glass.jpg</strong></small></div>
+                        </div>
                     </div>
                     <div class="cert-card">
                         <div class="cert-card-icon">✨</div>
                         <div class="cert-card-title">Bridal &amp; HD Airbrush Makeup</div>
-                        <div class="cert-card-sub">Advanced certification in Bridal Makeup, Airbrush &amp; Party Looks from a recognised beauty institute</div>
+                        <div class="cert-card-sub">Advanced certification in Bridal Makeup, HD Airbrush &amp; Party Looks from a recognised beauty institute</div>
                         <span class="cert-card-badge">✔ Advanced Certified</span>
-                        <div class="cert-img-placeholder"><span>📜</span>Add photo: <strong>cert_bridal.jpg</strong></div>
+                        <div class="cert-img-placeholder">
+                            <img src="cert_bridal.jpg" alt="Bridal Makeup Certificate" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                            <div style="display:none;flex-direction:column;align-items:center;gap:6px;"><span>📜</span><small>Add photo: <strong>cert_bridal.jpg</strong></small></div>
+                        </div>
                     </div>
                 </div>
 
@@ -2013,12 +2091,71 @@
                     </div>
                 </div>
 
+                <!-- ── CERTIFICATE CEREMONY PHOTOS ── -->
+                <div class="cert-section-title">📸 Certificate Ceremony Moments</div>
+                <div class="cert-photo-grid">
+                    <div class="cert-photo-item" onclick="openCertPhoto('cert_ceremony_1.jpg','Certificate Ceremony')">
+                        <img src="cert_ceremony_1.jpg" alt="Certificate Ceremony 1" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="cert-photo-placeholder" style="display:none;">
+                            <div class="cert-photo-placeholder-icon">🏅</div>
+                            <div class="cert-photo-placeholder-text">Add photo:<br><strong>cert_ceremony_1.jpg</strong></div>
+                        </div>
+                        <div class="cert-photo-caption">Certificate Ceremony</div>
+                    </div>
+                    <div class="cert-photo-item" onclick="openCertPhoto('cert_ceremony_2.jpg','Receiving Award')">
+                        <img src="cert_ceremony_2.jpg" alt="Certificate Ceremony 2" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="cert-photo-placeholder" style="display:none;">
+                            <div class="cert-photo-placeholder-icon">🎓</div>
+                            <div class="cert-photo-placeholder-text">Add photo:<br><strong>cert_ceremony_2.jpg</strong></div>
+                        </div>
+                        <div class="cert-photo-caption">Receiving Award</div>
+                    </div>
+                    <div class="cert-photo-item" onclick="openCertPhoto('cert_ceremony_3.jpg','Guest Felicitation')">
+                        <img src="cert_ceremony_3.jpg" alt="Certificate Ceremony 3" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="cert-photo-placeholder" style="display:none;">
+                            <div class="cert-photo-placeholder-icon">🌟</div>
+                            <div class="cert-photo-placeholder-text">Add photo:<br><strong>cert_ceremony_3.jpg</strong></div>
+                        </div>
+                        <div class="cert-photo-caption">Guest Felicitation</div>
+                    </div>
+                    <div class="cert-photo-item" onclick="openCertPhoto('cert_ceremony_4.jpg','Award Ceremony')">
+                        <img src="cert_ceremony_4.jpg" alt="Certificate Ceremony 4" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="cert-photo-placeholder" style="display:none;">
+                            <div class="cert-photo-placeholder-icon">🏆</div>
+                            <div class="cert-photo-placeholder-text">Add photo:<br><strong>cert_ceremony_4.jpg</strong></div>
+                        </div>
+                        <div class="cert-photo-caption">Award Ceremony</div>
+                    </div>
+                    <div class="cert-photo-item" onclick="openCertPhoto('cert_ceremony_5.jpg','Recognition Moment')">
+                        <img src="cert_ceremony_5.jpg" alt="Certificate Ceremony 5" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="cert-photo-placeholder" style="display:none;">
+                            <div class="cert-photo-placeholder-icon">✨</div>
+                            <div class="cert-photo-placeholder-text">Add photo:<br><strong>cert_ceremony_5.jpg</strong></div>
+                        </div>
+                        <div class="cert-photo-caption">Recognition Moment</div>
+                    </div>
+                    <div class="cert-photo-item" onclick="openCertPhoto('cert_ceremony_6.jpg','Guest of Honour')">
+                        <img src="cert_ceremony_6.jpg" alt="Certificate Ceremony 6" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="cert-photo-placeholder" style="display:none;">
+                            <div class="cert-photo-placeholder-icon">🌸</div>
+                            <div class="cert-photo-placeholder-text">Add photo:<br><strong>cert_ceremony_6.jpg</strong></div>
+                        </div>
+                        <div class="cert-photo-caption">Guest of Honour</div>
+                    </div>
+                </div>
+
                 <div class="cert-note">
                     📸 <strong>Physical certificates are available for verification at the institute.</strong><br>
                     Visit us at 2R-34 Janta Colony, Vaishali Nagar, Ajmer or call <strong>+91 63755 76181</strong> to know more.
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Cert Photo Lightbox -->
+    <div class="cert-lightbox" id="certLightbox" onclick="closeCertPhoto(event)">
+        <button class="cert-lightbox-close" id="certLightboxClose" title="Close">✕</button>
+        <img id="certLightboxImg" src="" alt="Certificate Photo">
     </div>
 
     <!-- AOS Animation Library -->
@@ -2165,7 +2302,25 @@
         function closeCertsOutside(e) {
             if (e.target === document.getElementById('certOverlay')) closeCerts();
         }
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCerts(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCerts(); closeCertLightbox(); } });
+
+        // ── CERT PHOTO LIGHTBOX ──
+        function openCertPhoto(src, caption) {
+            const lb = document.getElementById('certLightbox');
+            const img = document.getElementById('certLightboxImg');
+            img.src = src;
+            img.alt = caption || 'Certificate Photo';
+            lb.classList.add('open');
+        }
+        function closeCertLightbox() {
+            document.getElementById('certLightbox').classList.remove('open');
+        }
+        function closeCertPhoto(e, force) {
+            if (force || !e || e.target === document.getElementById('certLightbox') || e.target === document.getElementById('certLightboxClose')) {
+                closeCertLightbox();
+            }
+        }
+        document.getElementById('certLightboxClose').addEventListener('click', () => closeCertLightbox());
     </script>
 </body>
 </html>
