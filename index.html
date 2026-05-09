@@ -55,6 +55,25 @@
             font-size: clamp(0.9rem, 2vw, 1.1rem);
         }
         img { max-width: 100%; height: auto; }
+
+        /* ── GLOBAL IMAGE DISPLAY FIX ──
+           All framed images show full content (no cropping).
+           Sections that use aspect-ratio boxes with img inside
+           get object-fit:contain so nothing is cut off. */
+        .salon-service-item img,
+        .service-card img,
+        .course-card img,
+        .crash-card img,
+        .about-photo-frame img,
+        .whyus-poster-frame img,
+        .cert-img-placeholder img,
+        .logo-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+        }
         button, a { min-height: 44px; }
 
         ::-webkit-scrollbar { width: 4px; }
@@ -245,7 +264,7 @@
         .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
         .about-visual { position: relative; }
         .about-photo-frame { position: relative; border-radius: 28px; overflow: hidden; aspect-ratio: 4/5; background: linear-gradient(135deg, var(--primary-mid), var(--primary-light)); }
-        .about-photo-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s ease; }
+        .about-photo-img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; transition: transform 0.6s ease; background: linear-gradient(135deg, #ede8dd 0%, #dfd9cc 100%); }
         .about-photo-img:hover { transform: scale(1.04); }
         .photo-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; background: linear-gradient(160deg, #ede8dd 0%, #dfd9cc 100%); }
         .photo-placeholder-icon { width: 100px; height: 100px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; box-shadow: var(--glow-purple); }
@@ -336,19 +355,52 @@
         .gallery-tab:hover, .gallery-tab.active { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); border-color: transparent; color: #fff; }
         .gallery-panel { display: none; }
         .gallery-panel.active { display: block; }
-        .gallery-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
-        .gallery-item { border-radius: 18px; overflow: hidden; aspect-ratio: 4/3; position: relative; cursor: pointer; transition: transform 0.4s; background: var(--glass-bg); border: 1px solid var(--glass-border); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; align-items: start; }
+        .gallery-item { border-radius: 18px; overflow: hidden; position: relative; cursor: pointer; transition: transform 0.4s; background: var(--glass-bg); border: 1px solid var(--glass-border); }
         .gallery-item:hover { transform: scale(1.03); }
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s; }
-        .gallery-item:hover img { transform: scale(1.08); }
-        .gallery-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--text-muted); font-size: 0.85rem; }
+        .gallery-item img { width: 100%; height: auto; display: block; transition: transform 0.5s; }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-placeholder { display: none; width: 100%; aspect-ratio: 4/3; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: var(--text-muted); font-size: 0.85rem; }
+        .gallery-placeholder.visible { display: flex; }
         .gallery-placeholder-icon { font-size: 2.5rem; }
         .gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(139,0,74,0.85) 0%, transparent 60%); display: flex; align-items: flex-end; padding: 18px; opacity: 0; transition: opacity 0.4s; }
         .gallery-item:hover .gallery-overlay { opacity: 1; }
         .gallery-overlay-text { font-size: 0.9rem; font-weight: 600; }
-        /* Wide/tall gallery items */
+        /* Wide gallery item */
         .gallery-item.wide { grid-column: span 2; }
-        .gallery-item.tall { grid-row: span 2; }
+
+        /* ── GALLERY VIDEO ── */
+        .gallery-video-wrap {
+            margin-top: 40px;
+            border-radius: 22px; overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: #000;
+            position: relative;
+            aspect-ratio: 16/9;
+        }
+        .gallery-video-wrap video {
+            width: 100%; height: 100%; object-fit: contain; display: block; background: #000;
+        }
+        .gallery-video-label {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 1rem; font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+        .gallery-video-label span { font-size: 1.3rem; }
+        /* placeholder when no video file */
+        .gallery-video-placeholder {
+            width: 100%; height: 100%; min-height: 260px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 14px; color: var(--text-muted); font-size: 0.9rem;
+            background: linear-gradient(160deg, #ede8dd 0%, #dfd9cc 100%);
+        }
+        .gallery-video-placeholder .vp-icon { font-size: 3rem; }
+        .gallery-video-placeholder .vp-hint {
+            font-size: 0.78rem; color: var(--text-muted);
+            border: 1px dashed var(--glass-border);
+            border-radius: 10px; padding: 8px 16px; text-align: center; line-height: 1.6;
+        }
 
         /* ── TESTIMONIALS ── */
         #testimonials { background: transparent; }
@@ -375,6 +427,7 @@
         .why-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65; }
         .whyus-visual { position: relative; }
         .whyus-poster-frame { border-radius: 28px; overflow: hidden; background: linear-gradient(160deg, #e8e3d8, #dcd6c9); aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-border); position: relative; }
+        .whyus-poster-frame img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; }
         .whyus-badge-float { position: absolute; right: -20px; top: 30%; background: rgba(242,239,231,0.95); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 14px 18px; }
         .wbf-val { font-size: 1.4rem; font-weight: 800; color: var(--accent-gold); }
         .wbf-label { font-size: 0.72rem; color: var(--text-secondary); }
@@ -421,6 +474,19 @@
         .wa-tooltip { position: absolute; right: 68px; top: 50%; transform: translateY(-50%); background: rgba(26,10,46,0.9); border: 1px solid var(--glass-border); padding: 7px 14px; border-radius: 10px; white-space: nowrap; font-size: 0.8rem; font-weight: 500; backdrop-filter: blur(10px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .wa-float:hover .wa-tooltip { opacity: 1; }
 
+        /* ── INSTAGRAM FLOATS (left side) ── */
+        .insta-floats { position: fixed; bottom: 28px; left: 28px; display: flex; flex-direction: column; gap: 14px; z-index: 999; }
+        .insta-float { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.3s, box-shadow 0.3s; position: relative; }
+        .insta-float-1 { background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); box-shadow: 0 8px 32px rgba(220,39,67,0.45); animation: instaPulse 3s ease-in-out infinite; }
+        .insta-float-2 { background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%); box-shadow: 0 8px 32px rgba(131,58,180,0.45); animation: instaPulse 3s 0.8s ease-in-out infinite; }
+        .insta-float:hover { transform: scale(1.12); }
+        .insta-float-1:hover { box-shadow: 0 12px 40px rgba(220,39,67,0.65); }
+        .insta-float-2:hover { box-shadow: 0 12px 40px rgba(131,58,180,0.65); }
+        .insta-float svg { width: 28px; height: 28px; fill: #fff; }
+        @keyframes instaPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+        .insta-tooltip { position: absolute; left: 68px; top: 50%; transform: translateY(-50%); background: rgba(26,10,46,0.9); border: 1px solid var(--glass-border); padding: 7px 14px; border-radius: 10px; white-space: nowrap; font-size: 0.8rem; font-weight: 500; backdrop-filter: blur(10px); opacity: 0; pointer-events: none; transition: opacity 0.3s; color: #fff; }
+        .insta-float:hover .insta-tooltip { opacity: 1; }
+
         /* ── FOOTER ── */
         .footer { padding: 40px 20px; text-align: center; border-top: 1px solid var(--glass-border); background: rgba(139,0,74,0.08); }
         .footer-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
@@ -429,6 +495,31 @@
         .footer-tagline { color: var(--text-secondary); font-size: 1rem; margin-bottom: 8px; }
         .footer-address { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; }
         .footer-copyright { color: var(--text-muted); font-size: 0.82rem; }
+
+        /* ── FREE KIT BANNER ── */
+        .free-kit-banner {
+            display: flex; align-items: center; gap: 18px;
+            background: linear-gradient(135deg, rgba(139,0,74,0.1), rgba(212,0,90,0.07));
+            border: 1.5px solid rgba(139,0,74,0.3);
+            border-radius: 20px; padding: 20px 28px;
+            margin-bottom: 36px; position: relative; overflow: hidden;
+        }
+        .free-kit-banner::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+            animation: shimmerKit 3s ease-in-out infinite;
+        }
+        @keyframes shimmerKit { 0%,100%{transform:translateX(-100%)} 50%{transform:translateX(100%)} }
+        .free-kit-icon { font-size: 2.4rem; flex-shrink: 0; animation: floatBob 3s ease-in-out infinite; }
+        .free-kit-text { flex: 1; }
+        .free-kit-text strong { display: block; font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .free-kit-text span { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+        .free-kit-badge {
+            flex-shrink: 0; padding: 8px 18px; border-radius: 50px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: #fff; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
 
         /* ============================================
            RESPONSIVE STYLES
@@ -540,6 +631,14 @@
             /* ── WhatsApp float ── */
             .wa-float { width: 50px; height: 50px; bottom: 20px; right: 18px; }
             .wa-float svg { width: 24px; height: 24px; }
+            /* ── Instagram floats ── */
+            .insta-floats { bottom: 20px; left: 18px; gap: 10px; }
+            .insta-float { width: 50px; height: 50px; }
+            .insta-float svg { width: 22px; height: 22px; }
+            .insta-tooltip { display: none; }
+            /* ── Free kit banner ── */
+            .free-kit-banner { flex-direction: column; text-align: center; padding: 18px 16px; gap: 12px; }
+            .free-kit-badge { align-self: center; }
 
             /* ── Footer ── */
             .footer-grid { grid-template-columns: 1fr; gap: 28px; }
@@ -659,7 +758,11 @@
             border: 2px dashed var(--glass-border);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 8px; font-size: 0.8rem; color: var(--text-muted); margin-top: 12px;
-            text-align: center; padding: 12px;
+            text-align: center; padding: 12px; overflow: hidden;
+        }
+        .cert-img-placeholder img {
+            width: 100%; height: 100%; object-fit: contain; object-position: center;
+            border-radius: 10px; display: block;
         }
         .cert-img-placeholder span { font-size: 1.8rem; }
         .cert-note {
@@ -760,6 +863,20 @@
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.118 1.524 5.849L.054 23.27a.75.75 0 0 0 .916.99l5.635-1.476A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22.001A9.979 9.979 0 0 1 6.36 20.22l-.38-.227-3.944 1.034 1.053-3.836-.249-.396A9.955 9.955 0 0 1 2 12c0-5.514 4.486-10 10-10s10 4.486 10 10-4.486 10-10 10z"/></svg>
         <span class="wa-tooltip">Book Now!</span>
     </a>
+
+    <!-- Instagram Floats (left side) -->
+    <div class="insta-floats">
+        <!-- Facebook floating button -->
+        <a class="insta-float insta-float-1" style="background:linear-gradient(135deg,#1877f2,#0a5fd4);box-shadow:0 8px 32px rgba(24,119,242,0.45);" href="https://www.facebook.com/share/187F9KmwHL/" target="_blank" aria-label="Facebook – Shree Kusum Makeover">
+            <svg viewBox="0 0 24 24" fill="#fff" width="28" height="28"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            <span class="insta-tooltip">Facebook</span>
+        </a>
+        <!-- Instagram floating button -->
+        <a class="insta-float insta-float-2" href="https://www.instagram.com/skm_unisexsalon" target="_blank" aria-label="Instagram – SKM Unisex Salon">
+            <svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            <span class="insta-tooltip">@SKM Unisex Salon</span>
+        </a>
+    </div>
 
     <!-- Top Bar -->
     <div class="top-bar">
@@ -1061,7 +1178,7 @@
                 <div class="about-visual" data-aos="fade-right" data-aos-duration="1000">
                     <div class="about-photo-frame">
                         <!-- Replace with Madam's actual photo: <img src="madam.jpg" alt="Miss Kusum" class="about-photo-img"> -->
-                        <img src="photo.jpeg" alt="Miss Kusum" class="about-photo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <img src="photo.jpeg" alt="Miss Kusum" class="about-photo-img" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
                         <!-- <div class="photo-placeholder" style="display:none;">
                             <div class="photo-placeholder-icon">💄</div>
                             <div class="photo-placeholder-text">Miss Kusum's Photo</div>
@@ -1225,6 +1342,16 @@
                 <span class="section-badge">Institute Courses</span>
                 <h2 class="section-title">Learn at <span>Shree Kusum</span></h2>
                 <p class="section-subtitle">Professionally structured courses with international-standard certification. Build your career in beauty.</p>
+            </div>
+
+            <!-- Free Kit Banner -->
+            <div class="free-kit-banner" data-aos="fade-up" data-aos-delay="80">
+                <div class="free-kit-icon">🎁</div>
+                <div class="free-kit-text">
+                    <strong>All Professional Equipment Provided — Free of Cost!</strong>
+                    <span>Brushes, tools & products used during the course are fully supplied by the institute. You bring your passion — we provide everything else.</span>
+                </div>
+                <div class="free-kit-badge">✦ Included</div>
             </div>
 
             <!-- Tab Switcher -->
@@ -1448,123 +1575,131 @@
             <div class="section-header" data-aos="fade-up">
                 <span class="section-badge">Our Work</span>
                 <h2 class="section-title">Photo <span>Gallery</span></h2>
-                <p class="section-subtitle">A glimpse into our institute, salon space and the beautiful transformations we create every day.</p>
+                <p class="section-subtitle">A glimpse into our salon, institute space and the beautiful transformations we create every day.</p>
             </div>
 
+            <!-- Salon comes FIRST, then Institute -->
             <div class="gallery-tabs" data-aos="fade-up" data-aos-delay="100">
-                <button class="gallery-tab active" onclick="switchGallery(this,'gallery-institute')">🏫 Institute</button>
-                <button class="gallery-tab" onclick="switchGallery(this,'gallery-salon')">💇 Salon</button>
+                <button class="gallery-tab active" onclick="switchGallery(this,'gallery-salon')">💇 Salon</button>
+                <button class="gallery-tab" onclick="switchGallery(this,'gallery-institute')">🏫 Institute</button>
             </div>
 
-            <!-- Institute Gallery -->
-            <div class="gallery-panel active" id="gallery-institute">
-                <div class="gallery-grid">
-                    <!-- Replace each placeholder with: <img src="your-photo.jpg" alt="..."> inside .gallery-item -->
-                    <div class="gallery-item wide" data-aos="fade-up" data-aos-delay="50">
-                        <img src="institute-1.jpg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">🏫</div>
-                            <span>Institute Photo 1 — Replace src="institute-1.jpg"</span>
-                        </div>
-                        <div class="gallery-overlay"><div class="gallery-overlay-text">Institute — Main Hall</div></div>
-                    </div>
-                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="80">
-                        <img src="institute-2.jpg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">🎓</div>
-                            <span>Institute Photo 2</span>
-                        </div>
-                        <div class="gallery-overlay"><div class="gallery-overlay-text">Makeup Training</div></div>
-                    </div>
-                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="110">
-                        <img src="institute-3.jpg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">💄</div>
-                            <span>Institute Photo 3</span>
-                        </div>
-                        <div class="gallery-overlay"><div class="gallery-overlay-text">Makeup Session</div></div>
-                    </div>
-                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="140">
-                        <img src="institute-4.jpg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">💅</div>
-                            <span>Institute Photo 4</span>
-                        </div>
-                        <div class="gallery-overlay"><div class="gallery-overlay-text">Nail Artistry Class</div></div>
-                    </div>
-                    <div class="gallery-item wide" data-aos="fade-up" data-aos-delay="170">
-                        <img src="institute-5.jpg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">✨</div>
-                            <span>Institute Photo 5 — Replace src="institute-5.jpg"</span>
-                        </div>
-                        <div class="gallery-overlay"><div class="gallery-overlay-text">Students at Work</div></div>
-                    </div>
-                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="200">
-                        <img src="institute-6.jpg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">🎀</div>
-                            <span>Institute Photo 6</span>
-                        </div>
-                        <div class="gallery-overlay"><div class="gallery-overlay-text">Certifications & Awards</div></div>
-                    </div>
-                </div>
-                <p style="text-align:center;color:var(--text-muted);font-size:0.82rem;margin-top:20px;">📸 Replace placeholder images by uploading your institute photos and updating the src attributes above.</p>
-            </div>
-
-            <!-- Salon Gallery -->
-            <div class="gallery-panel" id="gallery-salon">
+            <!-- ── SALON GALLERY ── -->
+            <div class="gallery-panel active" id="gallery-salon">
                 <div class="gallery-grid">
                     <div class="gallery-item wide" data-aos="fade-up" data-aos-delay="50">
-                        <img src="salon-1.jpg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">💇</div>
-                            <span>Salon Photo 1 — Replace src="salon-1.jpg"</span>
-                        </div>
+                        <img src="salon-1.jpeg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">💇</div><span>Salon Photo 1</span></div>
                         <div class="gallery-overlay"><div class="gallery-overlay-text">Salon Interior</div></div>
                     </div>
                     <div class="gallery-item" data-aos="fade-up" data-aos-delay="80">
-                        <img src="salon-2.jpg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">💄</div>
-                            <span>Salon Photo 2</span>
-                        </div>
+                        <img src="salon-2.jpeg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">💄</div><span>Salon Photo 2</span></div>
                         <div class="gallery-overlay"><div class="gallery-overlay-text">Bridal Makeup</div></div>
                     </div>
                     <div class="gallery-item" data-aos="fade-up" data-aos-delay="110">
-                        <img src="salon-3.jpg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">💅</div>
-                            <span>Salon Photo 3</span>
-                        </div>
+                        <img src="salon-3.jpeg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">💅</div><span>Salon Photo 3</span></div>
                         <div class="gallery-overlay"><div class="gallery-overlay-text">Nail Art Service</div></div>
                     </div>
                     <div class="gallery-item" data-aos="fade-up" data-aos-delay="140">
-                        <img src="salon-4.jpg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">✂️</div>
-                            <span>Salon Photo 4</span>
-                        </div>
+                        <img src="salon-4.jpeg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">✂️</div><span>Salon Photo 4</span></div>
                         <div class="gallery-overlay"><div class="gallery-overlay-text">Hair Styling</div></div>
                     </div>
-                    <div class="gallery-item wide" data-aos="fade-up" data-aos-delay="170">
-                        <img src="salon-5.jpg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">🌸</div>
-                            <span>Salon Photo 5 — Replace src="salon-5.jpg"</span>
+                    <!-- VIDEO CARD inside the grid -->
+                    <div class="gallery-item gallery-item-video wide" data-aos="fade-up" data-aos-delay="170" style="aspect-ratio:16/9; background:#000;">
+                        <!--
+                            SALON VIDEO: save file as salon-video.mp4 in same folder, then:
+                            1. Delete the <div class="gallery-video-placeholder">…</div> below.
+                            2. Uncomment the <video> tag.
+
+                            <video controls playsinline style="width:100%;height:100%;object-fit:cover;">
+                                <source src="salon-video.mp4" type="video/mp4">
+                            </video>
+                        -->
+                        <div class="gallery-video-placeholder">
+                            <div class="vp-icon">🎬</div>
+                            <strong>Salon Video Tour</strong>
+                            <div class="vp-hint">Save as <code>salon-video.mp4</code> and follow the comment above.</div>
                         </div>
-                        <div class="gallery-overlay"><div class="gallery-overlay-text">Client Transformation</div></div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-text">▶ Salon Video Tour</div></div>
                     </div>
                     <div class="gallery-item" data-aos="fade-up" data-aos-delay="200">
-                        <img src="salon-6.jpg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                        <div class="gallery-placeholder">
-                            <div class="gallery-placeholder-icon">✨</div>
-                            <span>Salon Photo 6</span>
-                        </div>
+                        <img src="salon-5.jpeg" alt="Salon" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">✨</div><span>Salon Photo 5</span></div>
                         <div class="gallery-overlay"><div class="gallery-overlay-text">Happy Clients</div></div>
                     </div>
                 </div>
-                <p style="text-align:center;color:var(--text-muted);font-size:0.82rem;margin-top:20px;">📸 Replace placeholder images by uploading your salon photos and updating the src attributes above.</p>
+
+                <!-- VIEW MORE button -->
+                <div style="text-align:center;margin-top:36px;" data-aos="fade-up">
+                    <a href="gallery-salon.html" target="_blank" class="btn btn-primary" style="display:inline-flex;">
+                        View Full Salon Gallery
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                    </a>
+                    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:10px;">Opens all salon photos &amp; videos in a new page</p>
+                </div>
+                <p style="text-align:center;color:var(--text-muted);font-size:0.78rem;margin-top:8px;">📸 Replace src="salon-N.jpg" with your real photo filenames.</p>
+            </div>
+
+            <!-- ── INSTITUTE GALLERY ── -->
+            <div class="gallery-panel" id="gallery-institute">
+                <div class="gallery-grid">
+                    <div class="gallery-item wide" data-aos="fade-up" data-aos-delay="50">
+                        <img src="institute-1.jpeg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">🏫</div><span>Institute Photo 1</span></div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-text">Institute — Main Hall</div></div>
+                    </div>
+                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="80">
+                        <img src="institute-2.jpeg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">🎓</div><span>Institute Photo 2</span></div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-text">Makeup Training</div></div>
+                    </div>
+                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="110">
+                        <img src="institute-3.jpeg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">💄</div><span>Institute Photo 3</span></div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-text">Makeup Session</div></div>
+                    </div>
+                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="140">
+                        <img src="institute-4.jpeg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">💅</div><span>Institute Photo 4</span></div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-text">Nail Artistry Class</div></div>
+                    </div>
+                    <!-- VIDEO CARD inside the grid -->
+                    <div class="gallery-item gallery-item-video wide" data-aos="fade-up" data-aos-delay="170" style="aspect-ratio:16/9; background:#000;">
+                        <!--
+                            INSTITUTE VIDEO: save file as institute-video.mp4 in same folder, then:
+                            1. Delete the <div class="gallery-video-placeholder">…</div> below.
+                            2. Uncomment the <video> tag.
+
+                            <video controls playsinline style="width:100%;height:100%;object-fit:cover;">
+                                <source src="institute-video.mp4" type="video/mp4">
+                            </video>
+                        -->
+                        <div class="gallery-video-placeholder">
+                            <div class="vp-icon">🎬</div>
+                            <strong>Institute Video Tour</strong>
+                            <div class="vp-hint">Save as <code>institute-video.mp4</code> and follow the comment above.</div>
+                        </div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-text">▶ Institute Video Tour</div></div>
+                    </div>
+                    <div class="gallery-item" data-aos="fade-up" data-aos-delay="200">
+                        <img src="institute-5.jpeg" alt="Institute" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
+                        <div class="gallery-placeholder"><div class="gallery-placeholder-icon">✨</div><span>Institute Photo 5</span></div>
+                        <div class="gallery-overlay"><div class="gallery-overlay-text">Students at Work</div></div>
+                    </div>
+                </div>
+
+                <!-- VIEW MORE button -->
+                <div style="text-align:center;margin-top:36px;" data-aos="fade-up">
+                    <a href="gallery-institute.html" target="_blank" class="btn btn-primary" style="display:inline-flex;">
+                        View Full Institute Gallery
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                    </a>
+                    <p style="color:var(--text-muted);font-size:0.78rem;margin-top:10px;">Opens all institute photos &amp; videos in a new page</p>
+                </div>
+                <p style="text-align:center;color:var(--text-muted);font-size:0.78rem;margin-top:8px;">📸 Replace src="institute-N.jpg" with your real photo filenames.</p>
             </div>
         </div>
     </section>
@@ -1656,7 +1791,7 @@
                 </div>
                 <div class="whyus-visual" data-aos="fade-left" data-aos-duration="1000">
                     <div class="whyus-poster-frame">
-                        <img src="poster.jpg" alt="Shree Kusum Makeover" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <img src="poster.jpeg" alt="Shree Kusum Makeover" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.classList.add('visible');">
                         <div style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;">
                             <div style="font-size:4rem;margin-bottom:16px;">✿</div>
                             <div style="font-family:var(--font-display);font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--accent-purple),var(--accent-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;">Shree Kusum Makeover</div>
@@ -1780,7 +1915,7 @@
                     <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
                 </a>
                 <!-- Facebook: Shree Kusum Makeover -->
-                <a href="https://www.facebook.com/ShreeKusumMakeover" target="_blank" class="social-link" aria-label="Facebook – Shree Kusum Makeover" title="Facebook: Shree Kusum Makeover">
+                <a href="https://www.facebook.com/share/187F9KmwHL/" target="_blank" class="social-link" aria-label="Facebook – Shree Kusum Makeover" title="Facebook: Shree Kusum Makeover">
                     <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 </a>
             </div>
