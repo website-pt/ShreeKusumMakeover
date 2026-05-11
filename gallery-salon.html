@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#F2EFE7">
     <title>Salon Gallery — Shree Kusum Makeover</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,9 +27,13 @@
         /* ── HEADER ── */
         .pg-header {
             background: rgba(242,239,231,0.97);
+            -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
             padding: 12px 16px;
+            padding-top: calc(12px + env(safe-area-inset-top));
+            padding-left: calc(16px + env(safe-area-inset-left));
+            padding-right: calc(16px + env(safe-area-inset-right));
             display: flex; align-items: center; gap: 12px;
             position: sticky; top: 0; z-index: 100;
             box-shadow: 0 4px 20px rgba(139,0,74,0.1);
@@ -133,8 +140,10 @@
         .lightbox img { max-width: 90vw; max-height: 88vh; border-radius: 12px; object-fit: contain; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
         .lb-close {
             position: absolute; top: 20px; right: 24px;
+            right: calc(24px + env(safe-area-inset-right));
             font-size: 2rem; color: #fff; cursor: pointer; background: none; border: none; line-height: 1;
             opacity: 0.7; transition: opacity 0.2s;
+            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
         }
         .lb-close:hover { opacity: 1; }
         .lb-nav {
@@ -147,7 +156,7 @@
         .lb-nav:hover { background: rgba(139,0,74,0.5); }
         .lb-prev { left: 20px; }
         .lb-next { right: 20px; }
-        .lb-caption { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+        .lb-caption { position: absolute; bottom: calc(20px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 0.85rem; }
 
         /* ADD MORE hint box */
         .add-more-box {
@@ -324,6 +333,15 @@
             if (e.key === 'ArrowRight') lbNav(1);
             if (e.key === 'ArrowLeft') lbNav(-1);
         });
+
+        // ── TOUCH SWIPE for lightbox (iOS) ──
+        let lbTouchStartX = 0;
+        const lb = document.getElementById('lightbox');
+        lb.addEventListener('touchstart', e => { lbTouchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        lb.addEventListener('touchend', e => {
+            const dx = e.changedTouches[0].screenX - lbTouchStartX;
+            if (Math.abs(dx) > 50) lbNav(dx < 0 ? 1 : -1);
+        }, { passive: true });
     </script>
 </body>
 </html>
