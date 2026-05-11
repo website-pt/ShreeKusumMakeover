@@ -37,6 +37,9 @@
             position: sticky; top: 0; z-index: 100;
             box-shadow: 0 4px 20px rgba(139,0,74,0.1);
             flex-wrap: wrap;
+            /* iOS Safari: force new stacking context so child gradient-clip text renders correctly */
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
         @media (max-width: 560px) {
             .pg-title { font-size: 1.2rem; }
@@ -52,7 +55,22 @@
         }
         .pg-back:hover { background: rgba(139,0,74,0.14); }
         .pg-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; }
-        .pg-title span { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .pg-title span {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            /* iOS Safari fix: isolate from sticky parent's GPU compositing layer */
+            isolation: isolate;
+            position: relative;
+            z-index: 1;
+            -webkit-transform: translate3d(0,0,0);
+            transform: translate3d(0,0,0);
+            will-change: auto;
+            /* Fallback colour if gradient clip still fails */
+            color: var(--accent-purple);
+        }
         .pg-count { margin-left: auto; font-size: 0.82rem; color: var(--text-muted); }
 
         .pg-container { max-width: 1400px; margin: 0 auto; padding: 24px 12px 48px; }
